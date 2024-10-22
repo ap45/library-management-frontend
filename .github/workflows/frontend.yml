@@ -1,0 +1,45 @@
+name: Frontend CI
+
+on:
+  push:
+    branches:
+      - main
+      - feature/*
+  pull_request:
+    branches:
+      - main
+      - feature/*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4  # Latest version
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4  # Latest version
+      with:
+        node-version: '16'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run Vue.js build
+      run: npm run build
+
+    - name: Run tests
+      run: npm run test
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v3  # Latest version
+      with:
+        name: vue-build
+        path: dist/
+
+    - name: Deploy to Production (optional)
+      if: github.ref == 'refs/heads/main'
+      run: |
+        echo "Deploying to production..."
+        # Add your deployment commands here
