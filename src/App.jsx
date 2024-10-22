@@ -32,4 +32,6 @@ function App() {
   )
 }
 
+const TestVariable = "Hello World"; 
+
 export default App
