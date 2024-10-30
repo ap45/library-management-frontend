@@ -2,9 +2,14 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+// import { Button } from '@mui/material'
 
 function App() {
   const [count, setCount] = useState(0)
+
+  // function ButtonUsage() {
+  //   return <Button variant="outlined">Hello World!</Button>;
+  // }
 
   return (
     <>
@@ -21,6 +26,7 @@ function App() {
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
+        {/* <ButtonUsage /> */}
         <p>
           Edit <code>src/App.jsx</code> and save to test HMR
         </p>
@@ -31,7 +37,5 @@ function App() {
     </>
   )
 }
-
-const TestVariable = "Hello World"; 
 
 export default App
