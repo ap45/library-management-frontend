@@ -1,39 +1,36 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-// import { Button } from '@mui/material'
+
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
+// import './App.css'
+import Dashboard from "./components/dashboard/Dashboard"
+import AddItem from "./components/add-item/AddItem"
+import Patrons from "./components/patrons/Patrons"
+import AddPatron from "./components/add-patron/AddPatron"
+import ManageFines from "./components/manage-fines/ManageFines"
+import Checkout from "./components/checkout/Checkout"
+import Checkin from "./components/checkin/Checkin"
+import Header from "./components/header/Header"
+import Layout from "./components/layout/Layout"
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  // function ButtonUsage() {
-  //   return <Button variant="outlined">Hello World!</Button>;
-  // }
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        {/* <ButtonUsage /> */}
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <BrowserRouter>
+      <Header /> 
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Navigate to="/dashboard" /> } />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/add-item" element={<AddItem />} />
+            <Route path="/patrons" element={<Patrons />} />
+            <Route path="/add-patron" element={<AddPatron />} /> 
+            <Route path="/manage-fines" element={<ManageFines />} />
+            <Route path="/checkout" element={<Checkout /> } />
+            <Route path="/checkin" element={<Checkin /> } />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </Layout>
+      </BrowserRouter>
     </>
   )
 }
