@@ -1,0 +1,52 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  header {
+    color: #333;
+  }
+  
+  label {
+    font-weight: bold;
+    margin: 10px 0 5px;
+    color: #444;
+  }
+  
+  inputField {
+    padding: 8px;
+    margin-bottom: 10px;
+    width: 100%;
+    max-width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  button {
+    padding: 5px 20px;
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 5px;
+  }
+  
+  buttonHover {
+    background-color: #45a049;
+  }
+  
+  messageError {
+    color: red;
+    font-weight: bold;
+  }
+  
+  messageSuccess {
+    color: green;
+    font-weight: bold;
+  }
+  
