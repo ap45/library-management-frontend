@@ -1,6 +1,6 @@
 
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
-// import './App.css'
+import './App.css'
 import Dashboard from "./components/dashboard/Dashboard"
 import AddItem from "./components/add-item/AddItem"
 import Patrons from "./components/patrons/Patrons"
@@ -11,7 +11,7 @@ import Checkin from "./components/checkin/Checkin"
 import Header from "./components/header/Header"
 import Layout from "./components/layout/Layout"
 
-function App() {
+function App(){
 
   return (
     <>
@@ -34,5 +34,6 @@ function App() {
     </>
   )
 }
+
 
 export default App
