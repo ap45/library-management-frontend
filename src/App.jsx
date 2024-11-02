@@ -10,13 +10,15 @@ import Checkout from "./components/checkout/Checkout"
 import Checkin from "./components/checkin/Checkin"
 import Header from "./components/header/Header"
 import Layout from "./components/layout/Layout"
+import SearchBar from "./components/search-bar/SearchBar"
 
 function App(){
 
   return (
     <>
       <BrowserRouter>
-      <Header /> 
+      <Header />
+      <SearchBar /> 
         <Layout>
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" /> } />
