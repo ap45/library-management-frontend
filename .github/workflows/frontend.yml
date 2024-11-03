@@ -44,7 +44,7 @@ jobs:
           prerelease: false
           owner: ap45
           repo: library-management-frontend
-          token: ${{ secrets.ACTION_KEY }}  # Use the personal access token here
+          opts.auth: ${{ secrets.ACTION_KEY }}  # Use the personal access token here
 
       # Upload the frontend build
       - name: Upload to Release
