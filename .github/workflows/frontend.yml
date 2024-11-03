@@ -33,7 +33,6 @@ jobs:
         run: echo "timestamp=$(date +'%Y%m%d_%H%M%S')" >> $GITHUB_OUTPUT
 
       # Create Release step
-           # Create Release step
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -43,7 +42,9 @@ jobs:
           body: "Automated release of frontend build."
           draft: false
           prerelease: false
-          token: ${{ secrets.ACTION_KEY }}  # Use your secret token here
+          owner: ap45  # Replace with your GitHub username
+          repo: library-management-frontend  # Replace with your repository name
+          token: ${{ secrets.ACTION_KEY }}  # If using a personal access token, specify it here
 
 
       # Upload the frontend build
