@@ -42,9 +42,10 @@ jobs:
           body: "Automated release of frontend build."
           draft: false
           prerelease: false
-          owner: ap45  # Replace with your GitHub username
-          repo: library-management-frontend  # Replace with your repository name
-          # Removed token parameter
+          owner: ap45
+          repo: library-management-frontend
+          token: ${{ secrets.ACTION_KEY}}  # Use the personal access token
+
           
       # Upload the frontend build
       - name: Upload to Release
