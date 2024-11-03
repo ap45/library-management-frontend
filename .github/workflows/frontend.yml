@@ -42,7 +42,7 @@ jobs:
           body: "Automated release of frontend build."
           draft: false
           prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ACTION_KEY }}
 
       # Upload the frontend build
       - name: Upload to Release
