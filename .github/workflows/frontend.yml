@@ -35,7 +35,7 @@ jobs:
       # Create Release step
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@v1.1.4
         with:
           tag_name: frontend-build-${{ steps.timestamp.outputs.timestamp }}
           release_name: "Frontend Build ${{ steps.timestamp.outputs.timestamp }}"
