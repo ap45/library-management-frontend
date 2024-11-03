@@ -27,17 +27,31 @@ jobs:
         env:
           VITE_BACKEND_URL: ${{ secrets.PRODUCTION_API_URL }}
 
-      # Add a timestamp to artifact name
+      # Add the timestamp step here
       - name: Generate timestamp
         id: timestamp
         run: echo "timestamp=$(date +'%Y%m%d_%H%M%S')" >> $GITHUB_OUTPUT
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      # Create Release step
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
         with:
-          name: frontend-build-${{ steps.timestamp.outputs.timestamp }}
-          path: dist/
-          retention-days: 1
+          tag_name: frontend-build-${{ steps.timestamp.outputs.timestamp }}
+          release_name: "Frontend Build ${{ steps.timestamp.outputs.timestamp }}"
+          body: "Automated release of frontend build."
+          draft: false
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Upload the frontend build
+      - name: Upload to Release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/
+          asset_name: frontend-build-${{ steps.timestamp.outputs.timestamp }}.zip
+          asset_content_type: application/zip
 
       # Store the artifact name in a repository variable
       - name: Update Latest Build Info
@@ -48,6 +62,7 @@ jobs:
           https://api.github.com/repos/ap45/library-management-frontend/actions/variables/LATEST_BUILD \
           -d "{\"name\":\"LATEST_BUILD\",\"value\":\"frontend-build-${{ steps.timestamp.outputs.timestamp }}\"}"
 
+      # Trigger Backend Workflow
       - name: Trigger Backend Workflow
         uses: peter-evans/repository-dispatch@v2
         with:
