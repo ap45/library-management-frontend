@@ -44,7 +44,7 @@ jobs:
           prerelease: false
           owner: ap45
           repo: library-management-frontend
-          token: ${{ secrets.ACTION_KEY}}  # Use the personal access token
+          token: ${{ secrets.ACTION_KEY }}  # Use the personal access token
 
           
       # Upload the frontend build
