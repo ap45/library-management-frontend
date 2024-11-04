@@ -2,11 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import "./Checkout.css";
 
-
-
 const Checkout = () => {
   const [customerId, setCustomerId] = useState("");
-  const [itemIds, setItemIds] = useState(""); // Change itemId to itemIds
+  const [itemIds, setItemIds] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -18,29 +16,31 @@ const Checkout = () => {
     }
     const API_URL = import.meta.env.VITE_BACKEND_URL;
 
-
-    const itemIdArray = itemIds.split(',').map(id => id.trim()).filter(id => id); // Split and trim item IDs
+    const itemIdArray = itemIds.split(',').map(id => id.trim()).filter(id => id);
     setLoading(true);
     try {
       const response = await fetch(
-        `${API_URL}/api/check_out/${customerId}/`, // Update the URL to use only customer ID
+        `${API_URL}/api/check_out/${customerId}/`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ item_ids: itemIdArray }) // Send the item IDs in the request body
+          body: JSON.stringify({ item_ids: itemIdArray })
         }
       );
 
       const data = await response.json();
 
-      if (response.ok) {
+      if (response.status === 200) {
         setMessage(`${data.message} Due dates: ${data.due_dates.join(', ')}`);
         setCustomerId("");
-        setItemIds(""); // Clear the input field for item IDs
+        setItemIds("");
+      } else if (response.status === 207) {
+        // Handle the partial success (Multi-Status)
+        setMessage(`${data.message} Details: ${data.details.join(', ')}`);
       } else {
-        setMessage(data.message || "Error checking out the item.");
+        setMessage(data.message || "Error checking out the items.");
       }
     } catch (error) {
       setMessage("Error connecting to the server. Please try again later.");
@@ -95,4 +95,5 @@ const Checkout = () => {
     </div>
   );
 };
- export default Checkout;
+
+export default Checkout;
