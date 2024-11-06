@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react';
 import './Dashboard.css';
-import { Button, Dialog, DialogContent, DialogTitle, IconButton, CloseIcon } from '@mui/material';
+import { Button, Dialog, DialogContent, DialogTitle, DialogActions } from '@mui/material';
 
 const dummyData = [ //remove after api endpoint is connected
     {
@@ -182,15 +182,12 @@ const Dashboard = () => {
             <Dialog open={showDialog} onClose={handleCloseDialog} maxWidth="60%">
                 <div style={{backgroundColor: 'white', padding: '20px'}}>
                     <DialogTitle>
-                        Checked Out Books for {selectedPatron?.PatronFN} {selectedPatron?.PatronLN}
-                        <IconButton onClick={handleCloseDialog}>
+                        Checked Out Items for: {selectedPatron?.PatronFN} {selectedPatron?.PatronLN}
+                        {/* <IconButton onClick={handleCloseDialog}>
                             <CloseIcon />
-                        </IconButton>
+                        </IconButton> */} 
                     </DialogTitle>
                     {/*fetch and display checked out items for selected patron*/}
-                    {/* <DialogActions>
-                        <Button onClick={handleCloseDialog}>X</Button>
-                    </DialogActions> */}
                     <DialogContent>
                         <ul >
                             <li>Book 1</li>
@@ -198,6 +195,9 @@ const Dashboard = () => {
                             <li>Book 3</li>
                         </ul>
                     </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseDialog}>X</Button>
+                    </DialogActions>
                 </div>
             </Dialog>
         </div>
