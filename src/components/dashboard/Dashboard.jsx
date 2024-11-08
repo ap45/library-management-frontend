@@ -118,8 +118,11 @@ const dummyData = [ //remove after api endpoint is connected
 
 const Dashboard = () => {
     const [patrons, setPatrons] = useState([]); //ignore associated problem; will go away once endpoint is connected correctly and dummy data is removed
-    const [showDialog, setShowDialog] = useState(false);
+    const [libraryCards, setLibraryCards] = useState([]);
+    const [showBookDialog, setShowBookDialog] = useState(false);
+    const [showRenewDialog, setShowRenewDialog] = useState(false);
     const [selectedPatron, setSelectedPatron] = useState(null); 
+    const [loanedBooks, setLoanedBooks] = useState([]); //use for mapping loaned items in dialog
     
     useEffect(() => {
         const fetchData = async () => {
@@ -130,15 +133,46 @@ const Dashboard = () => {
 
         fetchData();
     }, []);
-    //comment
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await fetch('/api/books'); //replace with actual API endpoint
+            const data = await response.json();
+            setLoanedBooks(data); 
+        };
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await fetch('/api/libraryCard'); //replace with actual API endpoint
+            const data = await response.json();
+            setLibraryCards(data); 
+        };
+
+        fetchData();
+    }, []);
+
+    //potentially need a combined const for patrons, books, and library card for map functions to work correctly?
+    
     const handleViewCheckouts = (patron) => {
         setSelectedPatron(patron);
-        setShowDialog(true);
+        setShowBookDialog(true);
     };
 
-    const handleCloseDialog = () => {
-        setShowDialog(false);
-    }
+    const handleCloseBookDialog = () => {
+        setShowBookDialog(false);
+    };
+
+    const handleViewRenewDialog = () => {
+        setShowRenewDialog(true);
+        //setRenewalMessage(null);
+    };
+
+    const handleCloseRenewDialog = () => {
+        setShowRenewDialog(false);
+    };
 
     return (
         <div className="dashboard-container">
@@ -155,10 +189,14 @@ const Dashboard = () => {
                         <th>Phone Number</th>
                         <th>Email Address</th>
                         <th>View Checkouts</th>
+                        <th>Library Card Number</th>
+                        <th>Card Issue Date</th>
+                        <th>Card Expiration Date</th>
+                        <th>Renew Card</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {dummyData.map((patron) => ( // replace dummyData.map((patrons)) with patrons.map((patron))
+                    {dummyData.map((patron) => ( // replace dummyData.map((patrons)) with patrons.map((patrons))
                         <tr key={patron.PatronID}> 
                         <td>{patron.PatronID}</td>
                         <td>{patron.PatronFN}</td>
@@ -174,32 +212,59 @@ const Dashboard = () => {
                                 View
                             </Button>
                         </td>
+                        <td>
+                            {libraryCards.find(card => card.PatronID === patron.PatronID)?.CardID}
+                        </td>
+                        <td>
+                            {libraryCards.find(card => card.PatronID === patron.PatronID)?.issueDate}
+                        </td>
+                        <td>
+                            {libraryCards.find(card => card.PatronID === patron.PatronID)?.expirationDate}
+                        </td>
+                        <td>
+                            <Button variant="outlined" onClick={handleViewRenewDialog}>
+                                Renew
+                            </Button>
+                        </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
 
-            <Dialog open={showDialog} onClose={handleCloseDialog} maxWidth="60%">
+            <Dialog open={showBookDialog} onClose={handleCloseBookDialog} maxWidth="80%">
                 <div style={{backgroundColor: 'white', padding: '20px'}}>
                     <DialogTitle>
-                        Checked Out Items for: {selectedPatron?.PatronFN} {selectedPatron?.PatronLN}
-                        {/* <IconButton onClick={handleCloseDialog}>
-                            <CloseIcon />
-                        </IconButton> */} 
+                        Checked Out Items for: {selectedPatron?.PatronFN} {selectedPatron?.PatronLN} 
                     </DialogTitle>
                     {/*fetch and display checked out items for selected patron*/}
                     <DialogContent>
-                        <ul >
-                            <li>Book 1</li>
-                            <li>Book 2</li>
-                            <li>Book 3</li>
+                        <ul>
+                            {loanedBooks.map((Book) => (
+                                <li key={Book.id || Book.someUniqueIdentifier}> {/*replace with correct identifiers*/}
+                                    {/*Book properties; i.e. title, author, due date, etc*/}
+                                </li>
+                            ))}
                         </ul>
                     </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleCloseDialog}>X</Button>
+                    <DialogActions style={{display: "flex", justifyContent: "center"}}>
+                        <Button variant="outlined" onClick={handleCloseBookDialog}>Close</Button>
                     </DialogActions>
                 </div>
             </Dialog>
+
+            <Dialog open={showRenewDialog} onClose={handleCloseRenewDialog} maxWidth="80%">
+                  <DialogTitle style={{textAlign: "center"}}>Renew Library Card</DialogTitle>      
+                  <DialogContent style={{textAlign: "center"}}>
+                    Are you sure you want to renew this card? <br />
+                    **Note: Renew function not currently implemented on this page**
+                  </DialogContent>
+                  <DialogActions style={{display: "flex", justifyContent: "center"}}>
+                    <Button variant="outlined">Renew</Button> {/* needs functionality for updating issue/expiration dates*/}
+                    <Button variant="outlined" onClick={handleCloseRenewDialog}>Cancel</Button>
+                  </DialogActions>
+            </Dialog>
+            
+            
         </div>
     );
 };

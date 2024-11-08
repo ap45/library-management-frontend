@@ -7,6 +7,7 @@ table {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: center;
+    white-space: nowrap; 
   }
   
   th {
@@ -23,6 +24,8 @@ table {
 
 .dashboard-container {
     margin: 10px;
+    position: relative; 
+    overflow: auto; 
 }
 
 .view-checkout {

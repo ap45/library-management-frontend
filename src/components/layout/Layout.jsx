@@ -10,14 +10,19 @@ const Layout = () => {
     }
 
     const navDivStyle = {
-        flex: "1.8",
+        position: "fixed",
+        left: "0",
         boxShadow: "0 0 0 2px rgba(160, 160, 160, 0.5)",
-        minHeight: "100vh"
+        minHeight: "100vh",
+        zIndex: "1",
+        backgroundColor: "white",
     }
 
     const contentDivStyle = {
-        flex: "10.2",
-        minHeight: "100vh"
+        flex: "1",
+        minHeight: "100vh",
+        position: "relative",
+        left: "125px",
     }
 
     return (    
