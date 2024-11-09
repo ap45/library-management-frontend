@@ -1,5 +1,4 @@
 import { useState } from 'react';
-// import { useNavigate } from "react-router-dom";
 import "./Checkout.css";
 
 const Checkout = () => {
@@ -29,8 +28,6 @@ const Checkout = () => {
       if (response.ok && data.has_fines) {
         setHasFines(true);
         setMessage("Please pay outstanding fines in order to proceed with checkout.");
-        setLoading(false);
-        return;
       } else {
         await handleCheckout(); 
       }
@@ -106,14 +103,11 @@ const Checkout = () => {
       return;
     }
     const API_URL = import.meta.env.VITE_BACKEND_URL;
-    const API_URL = import.meta.env.VITE_BACKEND_URL;
 
-    const itemIdArray = itemIds.split(',').map(id => id.trim()).filter(id => id);
     const itemIdArray = itemIds.split(',').map(id => id.trim()).filter(id => id);
     setLoading(true);
     try {
       const response = await fetch(
-        `${API_URL}/api/check_out/${customerId}/`,
         `${API_URL}/api/check_out/${customerId}/`,
         {
           method: "POST",
@@ -121,13 +115,11 @@ const Checkout = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ item_ids: itemIdArray })
-          body: JSON.stringify({ item_ids: itemIdArray })
         }
       );
 
       const data = await response.json();
 
-      if (response.status === 200) {
       if (response.status === 200) {
         setMessage(`${data.message} Due dates: ${data.due_dates.join(', ')}`);
         setCustomerId("");
@@ -166,7 +158,6 @@ const Checkout = () => {
         await handleCheckout();
       } else {
         setMessage(payData.message || "Error paying fines.");
-        setMessage(data.message || "Error checking out the items.");
       }
     } catch (error) {
       setMessage("Error connecting to the server. Please try again later.");
@@ -241,12 +232,3 @@ const Checkout = () => {
 
 export default Checkout;
 
-
-
-
-
-
-
-
-
-export default Checkout;
