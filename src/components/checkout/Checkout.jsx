@@ -61,7 +61,7 @@ const Checkout = () => {
         setMessage("Valid library card. Proceed with checkout.");
       } else {
         setValidCard(false);
-        setRenewCard(true); // Allow renewing if the card is invalid
+        setRenewCard(true); 
         setMessage("Invalid library card. Renew library card to proceed with checkout.");
       }
     } catch (error) {
@@ -105,12 +105,13 @@ const Checkout = () => {
       setMessage("Please enter both Customer ID and Item IDs.");
       return;
     }
+    const API_URL = import.meta.env.VITE_BACKEND_URL;
 
     const itemIdArray = itemIds.split(',').map(id => id.trim()).filter(id => id);
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:8000/api/check_out/${customerId}/`,
+        `${API_URL}/api/check_out/${customerId}/`,
         {
           method: "POST",
           headers: {
@@ -122,13 +123,15 @@ const Checkout = () => {
 
       const data = await response.json();
 
-      if (response.ok) {
+      if (response.status === 200) {
         setMessage(`${data.message} Due dates: ${data.due_dates.join(', ')}`);
         setCustomerId("");
         setItemIds("");
-        setHasFines(false);
+      } else if (response.status === 207) {
+        // Handle the partial success (Multi-Status)
+        setMessage(`${data.message} Details: ${data.details.join(', ')}`);
       } else {
-        setMessage(data.message || "Error checking out the item.");
+        setMessage(data.message || "Error checking out the items.");
       }
     } catch (error) {
       setMessage("Error connecting to the server. Please try again later.");
