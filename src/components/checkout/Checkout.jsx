@@ -1,95 +1,122 @@
 import { useState } from 'react';
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import "./Checkout.css";
-
-// const Checkout = () => {
-//   const [customerId, setCustomerId] = useState("");
-//   const [itemId, setItemId] = useState("");
-//   const [message, setMessage] = useState("");
-//   const navigate = useNavigate();
-
-//   // Change anything starting at 21 for backend
-//   const handleCheckout = async () => {
-//     try {
-//       const response = await fetch(`/api/check_out/${customerId}/${itemId}/`, { //Change this im not
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       });
-
-//       if (response.ok) {
-//         const data = await response.json();
-//         setMessage(data.message);
-//       } else {
-//         const error = await response.json();
-//         setMessage(error.message);
-//       }
-//     // eslint-disable-next-line no-unused-vars
-//     } catch (error) {
-//       setMessage("Error checking out the item.");
-//     }
-//   };
-
-//   // Navigate to the ManageFines page
-  // const handlePayFines = () => {
-  //   navigate("./ManageFines.jsx"); 
-  // };
-
-//   return (
-//     <div>
-//       <h2>Checkout</h2>
-//       <div>
-//         <label>Customer ID:</label>
-//         <input
-//           type="text"
-//           value={customerId}
-//           onChange={(e) => setCustomerId(e.target.value)}
-//         />
-//       </div>
-//       <div>
-//         <label>Item ID:</label>
-//         <input
-//           type="text"
-//           value={itemId}
-//           onChange={(e) => setItemId(e.target.value)}
-//         />
-//       </div>
-//       <button onClick={handleCheckout}>Checkout</button>
-//       <button onClick={handlePayFines}>Manage Fines</button> 
-//       {message && <p>{message}</p>}
-//     </div>
-//   );
-// };
-
-// export default Checkout;
-
-// Update Checkout.js
 
 const Checkout = () => {
   const [customerId, setCustomerId] = useState("");
-  const [itemIds, setItemIds] = useState(""); // Change itemId to itemIds
+  const [itemIds, setItemIds] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [hasFines, setHasFines] = useState(false);
+  const [validCard, setValidCard] = useState(false);
+  const [renewCard, setRenewCard] = useState(false);
 
-  const handleCheckout = async () => {
-    if (!customerId || !itemIds) {
-      setMessage("Please enter both Customer ID and Item IDs");
-      return;
-    }
-
-    const itemIdArray = itemIds.split(',').map(id => id.trim()).filter(id => id); // Split and trim item IDs
+  const checkFinesBeforeCheckout = async () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:8000/api/check_out/${customerId}/`, // Update the URL to use only customer ID
+        `http://localhost:8000/api/check_fines/${customerId}/`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok && data.has_fines) {
+        setHasFines(true);
+        setMessage("Please pay outstanding fines in order to proceed with checkout.");
+        setLoading(false);
+        return;
+      } else {
+        await handleCheckout(); 
+      }
+    } catch (error) {
+      setMessage("Error connecting to the server. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const checkLibraryCard = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/check_library_card/${customerId}/`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          }
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok && data.valid_card) {
+        setValidCard(true);
+        setMessage("Valid library card. Proceed with checkout.");
+      } else {
+        setValidCard(false);
+        setRenewCard(true); // Allow renewing if the card is invalid
+        setMessage("Invalid library card. Renew library card to proceed with checkout.");
+      }
+    } catch (error) {
+      setMessage("Error connecting to the server. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCardRenew = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/renew_library_card/${customerId}/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          }
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage("Library card was renewed. Checkout can proceed.");
+        setValidCard(true);
+        setRenewCard(false);
+      } else {
+        setMessage(data.message || "Error renewing card.");
+      }
+    } catch (error) {
+      setMessage("Error connecting to the server. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCheckout = async () => {
+    if (!customerId || !itemIds) {
+      setMessage("Please enter both Customer ID and Item IDs.");
+      return;
+    }
+
+    const itemIdArray = itemIds.split(',').map(id => id.trim()).filter(id => id);
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/check_out/${customerId}/`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ item_ids: itemIdArray }) // Send the item IDs in the request body
+          body: JSON.stringify({ item_ids: itemIdArray })
         }
       );
 
@@ -98,7 +125,8 @@ const Checkout = () => {
       if (response.ok) {
         setMessage(`${data.message} Due dates: ${data.due_dates.join(', ')}`);
         setCustomerId("");
-        setItemIds(""); // Clear the input field for item IDs
+        setItemIds("");
+        setHasFines(false);
       } else {
         setMessage(data.message || "Error checking out the item.");
       }
@@ -109,8 +137,38 @@ const Checkout = () => {
     }
   };
 
-  const handlePayFines = () => {
-    navigate("./ManageFines.jsx"); 
+  const handlePayFine = async () => {
+    setLoading(true);
+    try {
+      const payResponse = await fetch(
+        `http://localhost:8000/api/pay_fines/${customerId}/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const payData = await payResponse.json();
+
+      if (payResponse.ok) {
+        setMessage("Fines paid successfully. Proceeding with checkout.");
+        setHasFines(false);
+        await handleCheckout();
+      } else {
+        setMessage(payData.message || "Error paying fines.");
+      }
+    } catch (error) {
+      setMessage("Error connecting to the server. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancelTransaction = () => {
+    setMessage("Transaction canceled due to outstanding fines.");
+    setHasFines(false);
   };
 
   return (
@@ -137,22 +195,46 @@ const Checkout = () => {
         />
       </div>
       <div className="button-group">
-        <button 
-          onClick={handleCheckout} 
-          disabled={loading || !customerId || !itemIds}
-        >
-          {loading ? "Processing..." : "Checkout"}
+        <button onClick={checkLibraryCard} disabled={loading || !customerId}>
+          {loading ? "Checking..." : "Check Library Card"}
         </button>
-        <button onClick={handlePayFines} disabled={loading}>
-          Manage Fines
-        </button>
+        {!hasFines ? (
+          <button 
+            onClick={checkFinesBeforeCheckout} 
+            disabled={loading || !customerId || !itemIds || !validCard}
+          >
+            {loading ? "Processing..." : "Checkout"}
+          </button>
+        ) : (
+          <>
+            <button onClick={handlePayFine} disabled={loading}>
+              Yes, Pay Fine
+            </button>
+            <button onClick={handleCancelTransaction} disabled={loading}>
+              No, Cancel
+            </button>
+          </>
+        )}
+        {renewCard && (
+          <button onClick={handleCardRenew} disabled={loading}>
+            {loading ? "Renewing..." : "Renew Library Card"}
+          </button>
+        )}
       </div>
       {message && (
-        <div className={`message ${message.includes("Error") || message.includes("Cannot") ? "error" : "success"}`}>
+        <div className={`message ${message.includes("Error") || message.includes("Invalid") ? "error" : "success"}`}>
           {message}
         </div>
       )}
     </div>
   );
 };
- export default Checkout;
+
+export default Checkout;
+
+
+
+
+
+
+
