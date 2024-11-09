@@ -7,7 +7,13 @@ const Navigation = () => {
   const location = useLocation();
 
   useEffect(() => {
-    setSelectedPath(location.pathname);
+    // check if initial path is '/' and highlight dashboard
+    if (location.pathname === "/") {
+      setSelectedPath('/dashboard');
+    }
+    else {
+      setSelectedPath(location.pathname);
+    }
   }, [location.pathname]);
 
   const NavbarStyle = {

@@ -10,11 +10,6 @@ export const menuItems = [
     },
 
     {
-        title: "Patrons",
-        path: "/patrons"
-    },
-
-    {
         title: "Add Patron",
         path: "/add-patron"
     },

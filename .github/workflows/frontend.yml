@@ -1,39 +1,58 @@
+name: Frontend Build and Deploy
+
 on:
   push:
-    branches:
-      - main
-      - feature/*
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
-      - feature/*
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4  # Latest version
+      - uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4  # Latest version
-      with:
-        node-version: '16'
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Run React build
-      run: npm run build
+      - name: Build
+        run: npm run build
+        env:
+          VITE_BACKEND_URL: ${{ secrets.PRODUCTION_API_URL }}
 
-    # - name: Run tests
-    #   run: npm run test
+      # Generate timestamp
+      - name: Generate timestamp
+        id: timestamp
+        run: echo "timestamp=$(date +'%Y%m%d_%H%M%S')" >> $GITHUB_OUTPUT
 
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v3  # Latest version
-      with:
-        name: react-build
-        path: dist/
+      # Upload the frontend build as an artifact
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: dist/
 
-    
+      # Store the artifact name in a repository variable
+      - name: Update Latest Build Info
+        run: |
+          curl -X PUT \
+          -H "Authorization: token ${{ secrets.ACTION_KEY }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/ap45/library-management-frontend/actions/variables/LATEST_BUILD \
+          -d "{\"name\":\"LATEST_BUILD\",\"value\":\"frontend-build-${{ steps.timestamp.outputs.timestamp }}\"}"
+
+      # Trigger Backend Workflow
+      - name: Trigger Backend Workflow
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.ACTION_KEY }}
+          repository: ap45/library-management-backend
+          event-type: trigger_backend
+          client-payload: '{"build_id": "frontend-build-${{ steps.timestamp.outputs.timestamp }}"}'

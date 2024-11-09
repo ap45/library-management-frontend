@@ -1,7 +1,7 @@
 
 const AddItem = () => {
     return (
-    <div>
+    <div style={{position: "fixed"}}>
         <h1>Hello World</h1>    
     </div>
     )
