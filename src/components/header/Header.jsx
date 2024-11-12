@@ -8,7 +8,9 @@ const Header = () => {
         textTransform: "uppercase",
         letterSpacing: "0.05em",
         boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)",
-        paddingBottom: "15px"
+        paddingBottom: "15px",
+        position: "fixed",
+        width: "100vw"
     };
 
     return (

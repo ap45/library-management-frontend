@@ -234,7 +234,7 @@ const Dashboard = () => {
             <Dialog open={showBookDialog} onClose={handleCloseBookDialog} maxWidth="80%">
                 <div style={{backgroundColor: 'white', padding: '20px'}}>
                     <DialogTitle>
-                        Checked Out Items for: {selectedPatron?.PatronFN} {selectedPatron?.PatronLN} 
+                        Checked Out Items for: <em>{selectedPatron?.PatronFN} {selectedPatron?.PatronLN}</em>
                     </DialogTitle>
                     {/*fetch and display checked out items for selected patron*/}
                     <DialogContent>
