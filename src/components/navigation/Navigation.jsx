@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { menuItems } from '../../utils/constant';
 import { useState, useEffect } from 'react';
+import zIndex from '@mui/material/styles/zIndex';
 
 const Navigation = () => {
   const [selectedPath, setSelectedPath] = useState(window.location.pathname); // Initial selected path
@@ -22,6 +23,7 @@ const Navigation = () => {
     paddingBottom: '10px',
     paddingLeft: '10px',
     textAlign: 'left',
+    zIndex: "3",
   };
 
   const ListItemStyle = {

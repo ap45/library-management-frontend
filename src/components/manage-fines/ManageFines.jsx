@@ -1,6 +1,6 @@
 
 const ManageFines = () => {
-    return <div>ManageFines</div>
+    return <div style={{position: "fixed"}}>ManageFines</div>
 };
 
 export default ManageFines; 

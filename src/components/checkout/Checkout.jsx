@@ -172,7 +172,7 @@ const Checkout = () => {
   };
 
   return (
-    <div className="checkout-container">
+    <div className="checkout-container" style={{position: "fixed"}}>
       <h2>Book Checkout</h2>
       <div className="input-group">
         <label htmlFor="customerId">Customer ID:</label>
