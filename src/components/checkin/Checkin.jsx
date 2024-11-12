@@ -1,6 +1,6 @@
 
 const Checkin = () => {
-    return <div>Checkin</div>
+    return <div style={{position: "fixed"}}>Checkin</div>
 };
 
 export default Checkin; 
