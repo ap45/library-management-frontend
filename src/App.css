@@ -1,0 +1,13 @@
+/* App.css or Layout.css */
+.main-content {
+    margin-left: 220px; /* Align with navbar width */
+    margin-top: 70px; /* Adjust for header height */
+    padding: 1rem;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        margin-top: 60px;
+    }
+}

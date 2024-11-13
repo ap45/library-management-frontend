@@ -1,52 +1,27 @@
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 20px;
-    font-family: Arial, sans-serif;
-  }
-  
-  header {
-    color: #333;
-  }
-  
-  label {
-    font-weight: bold;
-    margin: 10px 0 5px;
-    color: #444;
-  }
-  
-  inputField {
-    padding: 8px;
-    margin-bottom: 10px;
-    width: 100%;
-    max-width: 300px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  button {
-    padding: 5px 20px;
-    background-color: blue;
-    color: white;
-    border: none;
-    border-radius: 2px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin: 5px;
-  }
-  
-  buttonHover {
-    background-color: #45a049;
-  }
-  
-  messageError {
-    color: red;
-    font-weight: bold;
-  }
-  
-  messageSuccess {
-    color: green;
-    font-weight: bold;
-  }
-  
+.checkout-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #f5f5f5;
+}
+
+.instructions {
+  background-color: #fafafa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.message {
+  padding: 10px;
+  border-radius: 5px;
+}

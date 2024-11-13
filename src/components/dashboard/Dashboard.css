@@ -1,36 +1,44 @@
-table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-  
-  th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-    white-space: nowrap; 
-  }
-  
-  th {
-    background-color: #f2f2f2;
-  }
-  
-  tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-
-  td:last-child {
-    text-align: center; 
-  }
-
+/* Dashboard.css */
 .dashboard-container {
-    margin: 10px;
-    position: relative; 
-    overflow: auto; 
+  margin: 0 auto;
+  padding: 1rem;
+  max-width: 1200px; /* Ensures the container is centered and doesn't exceed this width */
 }
 
-.view-checkout {
-    border: 1px solid #ccc; 
-    padding: 5px 10px;
-    cursor: pointer;
-    text-align: center; 
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dashboard-table th,
+.dashboard-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.dashboard-table th {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+/* Responsive styling for smaller screens */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 1rem;
+    margin-left: 0;
   }
+
+  .dashboard-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .dashboard-table th,
+  .dashboard-table td {
+    padding: 8px;
+    font-size: 0.9rem; /* Adjust font size for readability */
+  }
+}

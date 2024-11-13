@@ -6,7 +6,6 @@ const Layout = () => {
     const pageDivStyle = {
         display: "flex",
         height: "100vh"
-    
     }
 
     const navDivStyle = {
@@ -22,7 +21,7 @@ const Layout = () => {
         flex: "1",
         minHeight: "100vh",
         position: "relative",
-        left: "125px",
+        left: "200px", /* Matches sidebar width */
     }
 
     return (    
@@ -37,4 +36,4 @@ const Layout = () => {
     )
 };
 
-export default Layout; 
+export default Layout;

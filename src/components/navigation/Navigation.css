@@ -1,0 +1,48 @@
+/* Navigation.css */
+.navbar {
+    width: 200px;
+    background-color: #f4f4f9;
+    border-right: 1px solid #ddd;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    padding-top: 70px; /* Adjust for header overlap */
+}
+
+.navbar-menu {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar-item {
+    margin: 0;
+}
+
+.navbar-link {
+    display: block;
+    padding: 10px 20px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.navbar-item.selected .navbar-link,
+.navbar-link:hover {
+    background-color: #3f51b5;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding-top: 0;
+    }
+    .navbar-menu {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+    }
+}

@@ -13,10 +13,10 @@ import SearchBar from "./components/search-bar/SearchBar";
 
 function App() {
   return (
-    <>
-      <BrowserRouter>
-        <Header />
-        <SearchBar />
+    <BrowserRouter>
+      <Header />
+      <div className="main-content">
+        {/* <SearchBar /> */}
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
@@ -29,8 +29,8 @@ function App() {
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
-      </BrowserRouter>
-    </>
+      </div>
+    </BrowserRouter>
   );
 }
 
