@@ -10,9 +10,10 @@ const Checkout = () => {
   const [hasFines, setHasFines] = useState(false);
   const [validCard, setValidCard] = useState(false);
   const [renewCard, setRenewCard] = useState(false);
+  const [checkoutEnabled, setCheckoutEnabled] = useState(false);
 
   const instructions = [
-    "Enter a valid Customer ID to check the library card status.",
+    "Enter a valid Customer ID to check the library card status. (you can Try ID's (1-100) for customer and ITEM IDs(1-107) ",
     "Click on 'Check Library Card' to verify if the card is valid or expired.",
     "If the library card is expired, you will be prompted to renew it.",
     "Once renewed, check the library card status again to proceed.",
@@ -20,7 +21,7 @@ const Checkout = () => {
     "Click on 'Checkout' to check for any outstanding fines.",
     "If there are outstanding fines, you will be prompted to pay them.",
     "Once fines are cleared and the library card is valid, click 'Checkout' to complete the process.",
-    "Upon successful checkout, a message with due dates will appear."
+    "Upon successful checkout, a message with item IDs and due dates will appear."
   ];
 
   const checkLibraryCard = async () => {
@@ -76,9 +77,11 @@ const Checkout = () => {
       const data = await response.json();
       if (data.has_fines) {
         setHasFines(true);
+        setCheckoutEnabled(false);
         setMessage(data.message);
       } else {
-        await handleCheckout();
+        setCheckoutEnabled(true);
+        setMessage(data.message || "No outstanding fines.You may proceed with checkout.");
       }
     } catch (error) {
       setMessage("Error checking fines.");
@@ -97,8 +100,8 @@ const Checkout = () => {
       });
       const data = await response.json();
       setHasFines(false);
-      setMessage(data.message || "Fines paid.");
-      await handleCheckout();
+      setCheckoutEnabled(true); // Enable checkout after paying fines
+      setMessage(data.message || "Fines paid. You may proceed with checkout.");
     } catch (error) {
       setMessage("Error paying fines.");
     } finally {
@@ -123,7 +126,10 @@ const Checkout = () => {
       });
       const data = await response.json();
       if (data.status === 'success') {
-        setMessage(`${data.message} Due dates: ${data.due_dates.join(', ')}`);
+        const checkedOutItems = data.checked_out_items
+          .map(item => `Item ID: ${item.item_id}, Due Date: ${item.due_date}`)
+          .join('\n');
+        setMessage(`Checkout successful!\n${checkedOutItems}`);
         setCustomerId("");
         setItemIds("");
       } else {
@@ -178,7 +184,7 @@ const Checkout = () => {
             Renew Library Card
           </button>
         )}
-        {!hasFines && validCard && (
+        {!hasFines && validCard && !checkoutEnabled && (
           <button onClick={checkFinesBeforeCheckout} disabled={loading || !itemIds} style={{ padding: "10px 20px", marginRight: "10px", backgroundColor: "#4caf50", color: "white", border: "none", borderRadius: "5px" }}>
             Checkout
           </button>
@@ -188,9 +194,14 @@ const Checkout = () => {
             Pay Fine
           </button>
         )}
+        {checkoutEnabled && (
+          <button onClick={handleCheckout} disabled={loading} style={{ padding: "10px 20px", backgroundColor: "#4caf50", color: "white", border: "none", borderRadius: "5px" }}>
+            Checkout
+          </button>
+        )}
       </div>
       {message && (
-        <div style={{ marginTop: "20px", color: message.includes("Error") ? "red" : "green" }}>
+        <div style={{ marginTop: "20px", whiteSpace: "pre-line", color: message.includes("Error") ? "red" : "green" }}>
           {message}
         </div>
       )}
