@@ -1,14 +1,21 @@
+/* Header.css */
 .header {
-    background-color: #0056b3;
-    color: white;
-    font-size: 24px;
-    padding: 10px;
-    text-align: center;
-    text-transform: uppercase;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 10;
+  background-color: #3f51b5;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+@media (max-width: 768px) {
+  .header {
+      font-size: 1.5rem;
+      padding: 0.8rem;
   }
-  
+}

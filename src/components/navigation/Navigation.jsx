@@ -15,33 +15,6 @@ const Navigation = () => {
     }
   }, [location.pathname]);
 
-  const NavbarStyle = {
-    listStyleType: 'none',
-    padding: '0',
-    paddingBottom: '10px',
-    paddingLeft: '10px',
-    textAlign: 'left',
-  };
-
-  const ListItemStyle = {
-    margin: '10px',
-    paddingBottom: '20px',
-    paddingTop: '20px',
-    paddingLeft: '10px',
-    textDecoration: 'none',
-    color: 'black',
-    textAlign: 'left',
-    cursor: 'pointer',
-    borderRadius: '5px',
-    transition: 'background-color 0.3s, color 0.3s', // Add transition for smooth effect
-  };
-
-  const SelectedListItemStyle = {
-    ...ListItemStyle, // Inherit styles from ListItemStyle
-    backgroundColor: 'lightblue',
-    color: 'white', // Set color to white for selected item
-  };
-
   return (
     <nav className="navbar">
     <ul className="navbar-menu">
