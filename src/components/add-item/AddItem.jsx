@@ -54,7 +54,7 @@ const AddItem = () => {
   };
 
   return (
-    <div className="add-item-container">
+    <div className="add-item-container" style={{position: "fixed"}}>
       <h2>Add New Book</h2>
       <div className="input-group">
         <label htmlFor="title">Title:</label>

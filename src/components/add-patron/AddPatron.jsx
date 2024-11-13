@@ -1,6 +1,6 @@
 
 const AddPatron = () => {
-    return <div>AddPatron</div>
+    return <div style={{position: "fixed"}}>AddPatron</div>
 };
 
 export default AddPatron; 
