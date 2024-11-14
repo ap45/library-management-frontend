@@ -3,13 +3,15 @@ import './App.css';
 import Dashboard from "./components/dashboard/Dashboard";
 import AddItem from "./components/add-item/AddItem";
 import AddPatron from "./components/add-patron/AddPatron";
-import ManageFines from "./components/manage-fines/ManageFines";
 import Checkout from "./components/checkout/Checkout";
 import Checkin from "./components/checkin/Checkin";
+import Reservation from "./components/reservation/Reservation";
+import Renewal from "./components/renewal/Renewal";
 
 import Header from "./components/header/Header";
 import Layout from "./components/layout/Layout";
-import SearchBar from "./components/search-bar/SearchBar";
+
+// import SearchBar from "./components/search-bar/SearchBar"; search bar scrapped
 
 function App() {
   return (
@@ -23,9 +25,10 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="add-item" element={<AddItem />} />
             <Route path="add-patron" element={<AddPatron />} />
-            <Route path="manage-fines" element={<ManageFines />} />
             <Route path="checkout" element={<Checkout />} />
             <Route path="checkin" element={<Checkin />} />
+            <Route path="reservation" element={<Reservation />} />
+            <Route path="renewal" element={<Renewal />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

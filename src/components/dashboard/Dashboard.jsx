@@ -202,8 +202,8 @@ const dummyData = [ //remove after api endpoint is connected
   
         {/* Book Checkout Dialog */}
         <Dialog open={showBookDialog} onClose={handleCloseBookDialog} maxWidth="md" fullWidth>
-          <DialogTitle>
-            Checked Out Items for: {selectedPatron?.PatronFN} {selectedPatron?.PatronLN}
+          <DialogTitle style={{textAlign: "center"}}>
+            Checked Out Items for: <em>{selectedPatron?.PatronFN} {selectedPatron?.PatronLN}</em>
           </DialogTitle>
           <DialogContent>
             <ul>
@@ -221,10 +221,10 @@ const dummyData = [ //remove after api endpoint is connected
   
         {/* Renew Library Card Dialog */}
         <Dialog open={showRenewDialog} onClose={handleCloseRenewDialog} maxWidth="xs">
-          <DialogTitle>Renew Library Card</DialogTitle>
+          <DialogTitle style={{textAlign: "center"}}>Renew Library Card</DialogTitle>
           <DialogContent>
             <p>Are you sure you want to renew this card?</p>
-            <p>**Note: Renew function not currently implemented on this page**</p>
+            <p>**Note: Renew function not currently implemented on this page. Please use the function to check the card on checkout for renewing a card.**</p>
           </DialogContent>
           <DialogActions>
             <Button>Renew</Button>

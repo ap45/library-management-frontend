@@ -15,11 +15,6 @@ export const menuItems = [
     },
 
     {
-        title: "Manage Fines",
-        path: "/manage-fines"
-    },
-
-    {
         title: "Checkout",
         path: "/checkout"
     },
@@ -28,4 +23,14 @@ export const menuItems = [
         title: "Checkin",
         path: "/checkin"
     },
+
+    {
+        title: "Reservation",
+        path: "/reservation"
+    },
+
+    {
+        title: "Renewal",
+        path: "/renewal"
+    }
 ];
