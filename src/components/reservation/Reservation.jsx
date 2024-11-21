@@ -57,6 +57,7 @@ const Reservation = () => {
     e.preventDefault(); 
 
     //conditional will need to use an API call? to check that entered PatronID exists in the database 
+    //should have a second check (hidden) that checks the validity of the library card; look at checkout.jsx for the code for this? 
     if (!patronID) {
       setReservationMessage('Please enter a valid Patron ID to reserve.'); 
       return;  
@@ -67,7 +68,7 @@ const Reservation = () => {
     setReservationMessage(`Book ${bookID} has been reserved for Patron ${patronID}`); //update message after reservation
     setShowResetButton(true); 
 
-    setBookID('');
+    setBookID(''); //these reset the form inputs to be blank
     setPatronID('');
   }
 
@@ -76,7 +77,7 @@ const Reservation = () => {
       <h2>Reserve a Book</h2>
       <form onSubmit={handleCheckAvailability}>
         <div className="input-group">
-          <label htmlFor="bookID">Book Number: </label>
+          <label htmlFor="bookID">Book ID: </label>
           <input
             type="number"
             id="bookID"
@@ -91,7 +92,7 @@ const Reservation = () => {
         <div className="book-info">
           {bookInfo.patronID ? (
             <div>
-              <p>This book is currently checked out and will be returned on (placeholder return date).</p>
+              <p>This book is currently checked out and is expected to be returned on (placeholder).</p>
               <p>To reserve this book, please enter your Patron ID:</p>
               <form onSubmit={handleReserve}>
                 <div className="input-group">
@@ -106,10 +107,10 @@ const Reservation = () => {
                 <br />
                 {reservationMessage && <p className="reservation-message">{reservationMessage}</p>}
                 <button type="submit">Reserve</button>
-                {/* would be nice if there was a button here to reset the page, after the book as been reserved*/}
               </form>
               {showResetButton && (
                 <div>
+                  {/* button does not currently work to reload page */}
                   <button onClick={() => window.location.reload()}>Make another Reservation</button>
                 </div>
               )}
