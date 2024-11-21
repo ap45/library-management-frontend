@@ -16,10 +16,13 @@ const Reservation = () => {
     { id: 3, title: 'Book 3', patronID: null }
   ];
 
+  // checks if book ID is valid. if valid, updates bookInfo state variable with all data corresponding to book
+  // this allows us to check if the patronID is assigned or not, handling the conditional rendering of elements on the page
+  // the switch is taken care of by the setup in the return statement
   const handleCheckAvailability = async (e) => {
     e.preventDefault(); 
 
-    // actual method? not sure until i connect with backend 
+    // actual method? not sure until i connect with backend  
     // try {
     //   const response = await fetch(`books/bookID`) //replace with API endpoint
     //   const bookData = await response.json(); 
@@ -47,24 +50,58 @@ const Reservation = () => {
         setBookInfo(book); 
       }
 
+      // should have another conditional that checks if the book already has a reservation 
+      // fail availability check with 'already reserved, try again later' if book has a reservation
+
     } catch (error) {
       console.error('Error', error); 
       alert('Error checking book availability'); 
     }
   };
 
+  // checks if the entered patronID exists in the system
+  // if yes, allows the book to be reserved
+  // if no, should prevent book from being reserved
   const handleReserve = (e) => {
     e.preventDefault(); 
 
-    //conditional will need to use an API call? to check that entered PatronID exists in the database 
-    //should have a second check (hidden) that checks the validity of the library card; look at checkout.jsx for the code for this? 
+    //conditional will use an API call to check that entered PatronID exists in the database 
     if (!patronID) {
       setReservationMessage('Please enter a valid Patron ID to reserve.'); 
       return;  
     }
 
-    //implement logic to hanlde reservation with Patron ID (API call)
+    // check validity of library card (not expired) 
+    // try {
+    //   const response = await fetch(`${API_URL}/api/check_library_card/${patronID}/`, {
+    //     method: "GET",
+    //     headers: { "Content-Type": "application/json" }
+    //   });
+    //   const data = await response.json();
+  
+    //   if (data.status !== 'success' || !data.valid_card) {
+    //     setReservationMessage("Your library card is invalid or expired. Please renew your card.");
+    //     return;
+    //   }
+    // } catch (error) {
+    //   setReservationMessage("Error checking validity of library card. Please try again later.");
+    // }
+
+    // check the number of reservations the patron currently has and prevent new reservation if maximum is reached
+    // const response = await fetch(`/patrons/${patronID}/reservations`); //replace with API endpoint
+    // const reservationCount = await response.json(); 
+    
+    // const maxReservations = 2; 
+
+    // if (reservationCount >= maxReservations) {
+    //   setReservationMessage(`You have reached the maximum number of allowed reservations (${maxReservations}).`);
+    //   return; 
+    // }
+
+    //implement logic to handle reservation with Patron ID (API call)
     //needs to set a flag or something? not sure how to handle this exactly 
+
+    // the following go into the conditional that handles placing the reservation on the patron in the DB with an API call
     setReservationMessage(`Book ${bookID} has been reserved for Patron ${patronID}`); //update message after reservation
     setShowResetButton(true); 
 
@@ -72,6 +109,7 @@ const Reservation = () => {
     setPatronID('');
   }
 
+  //conditional rendering of components takes care of checking the availability
   return (
     <div className="reservation-container">
       <h2>Reserve a Book</h2>
