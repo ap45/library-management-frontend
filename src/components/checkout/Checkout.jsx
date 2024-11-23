@@ -1,215 +1,228 @@
 import { useState } from 'react';
-import "./Checkout.css";
+import './Checkout.css';
 
 const Checkout = () => {
   const API_URL = import.meta.env.VITE_BACKEND_URL;
-  const [customerId, setCustomerId] = useState("");
-  const [itemIds, setItemIds] = useState("");
-  const [message, setMessage] = useState("");
+  const [customerId, setCustomerId] = useState('');
+  const [itemIds, setItemIds] = useState('');
+  const [message, setMessage] = useState('');
+  const [messageColor, setMessageColor] = useState(''); // To set the message color
   const [loading, setLoading] = useState(false);
-  const [hasFines, setHasFines] = useState(false);
-  const [totalFines, setTotalFines] = useState(0);
   const [validCard, setValidCard] = useState(false);
   const [renewCard, setRenewCard] = useState(false);
+  const [hasFines, setHasFines] = useState(false);
+  const [totalFines, setTotalFines] = useState(0);
   const [checkoutEnabled, setCheckoutEnabled] = useState(false);
+  const [instructions, setInstructions] = useState([
+    "Enter your customer ID and click 'Check Library Card' to verify the card status.",
+    "If the card is expired, renew it and verify again.",
+    "Once the card is valid, check for any outstanding fines.",
+    "If fines exist, pay them to proceed.",
+    "Finally, enter item IDs and click 'Checkout' to complete the process.",
+  ]);
 
-  const instructions = [
-    "Enter a valid Customer ID to check the library card status. (Customer IDs can be entered from 1-100 and Item Ids can be entered from 1-107)",
-    "Click on 'Check Library Card' to verify if the card is valid or expired.",
-    "If the library card is expired, you will be prompted to renew it.",
-    "Once renewed, check the library card status again to proceed.",
-    "If the library card is valid, enter Item IDs (comma-separated) for checkout.",
-    "Click on 'Checkout' to check for any outstanding fines.",
-    "If there are outstanding fines, you will be prompted to pay them.",
-    "Once fines are cleared and the library card is valid, click 'Checkout' to complete the process.",
-    "Upon successful checkout, a message with item IDs and due dates will appear."
-  ];
+  const handleMessage = (msg, color) => {
+    setMessage(msg);
+    setMessageColor(color);
+  };
 
-  const checkLibraryCard = async () => {
+  const handleCheckLibraryCard = async () => {
     setLoading(true);
-    setMessage("");
+    handleMessage('', '');
     try {
-      const response = await fetch(`${API_URL}/api/check_library_card/${customerId}/`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" }
+      const response = await fetch(`${API_URL}/api/check_library_card/${customerId}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setValidCard(data.valid_card);
+        handleMessage(data.message, data.valid_card ? 'green' : 'red');
+        if (!data.valid_card) {
+          setRenewCard(true); // Prompt to renew the card
+        }
+      } else {
+        handleMessage(data.message, 'red');
+        setValidCard(false);
+      }
+    } catch (error) {
+      handleMessage('Error checking library card.', 'red');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRenewLibraryCard = async () => {
+    setLoading(true);
+    handleMessage('', '');
+    try {
+      const response = await fetch(`${API_URL}/api/renew_library_card/${customerId}`, {
+        method: 'POST',
       });
       const data = await response.json();
-      if (data.status === 'success' && data.valid_card) {
+      handleMessage(data.message, response.ok ? 'green' : 'red');
+      if (response.ok) {
+        setRenewCard(false);
         setValidCard(true);
-        setCheckoutEnabled(false);
-        setMessage(data.message);
-      } else {
-        setRenewCard(true);
-        setCheckoutEnabled(false);
-        setMessage(data.message);
       }
     } catch (error) {
-      setMessage("Error connecting to server.");
+      handleMessage('Error renewing library card.', 'red');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCardRenew = async () => {
+  const handleCheckFines = async () => {
     setLoading(true);
-    setMessage("");
+    handleMessage('Checking for fines...', 'green');
     try {
-      const response = await fetch(`${API_URL}/api/renew_library_card/${customerId}/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" }
-      });
+      const response = await fetch(`${API_URL}/api/check_fines/${customerId}`);
       const data = await response.json();
-      setRenewCard(false);
-      setValidCard(true);
-      setMessage(data.message || "Library card renewed. Please recheck card status.");
-    } catch (error) {
-      setMessage("Error renewing card.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const checkFinesBeforeCheckout = async () => {
-    setLoading(true);
-    setMessage("");
-    try {
-      const response = await fetch(`${API_URL}/api/check_fines/${customerId}/`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" }
-      });
-      const data = await response.json();
-      if (data.has_fines) {
-        setHasFines(true);
+      if (response.ok) {
+        setHasFines(data.has_fines);
         setTotalFines(data.total_fines);
-        setCheckoutEnabled(false);
-        setMessage(data.message);
+        handleMessage(data.message, data.has_fines ? 'red' : 'green');
+        if (!data.has_fines) {
+          setCheckoutEnabled(true); // Enable checkout if no fines
+        }
       } else {
-        setHasFines(false);
-        setCheckoutEnabled(true);
-        setMessage("No outstanding fines. You may proceed with checkout.");
+        handleMessage(data.message, 'red');
       }
     } catch (error) {
-      setMessage("Error checking fines.");
+      handleMessage('Error checking fines.', 'red');
     } finally {
       setLoading(false);
     }
   };
 
-  const handlePayFine = async () => {
+  const handlePayFines = async () => {
     setLoading(true);
-    setMessage("");
+    handleMessage('', '');
     try {
       const response = await fetch(`${API_URL}/api/pay_fines/${customerId}/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" }
+        method: 'POST',
       });
       const data = await response.json();
-      setHasFines(false);
-      setCheckoutEnabled(true); // Enable checkout after paying fines
-      setMessage(data.message || "Fines paid. You may proceed with checkout.");
+      handleMessage(data.message, response.ok ? 'green' : 'red');
+      if (response.ok) {
+        setHasFines(false); // Assume fines are now cleared
+        setCheckoutEnabled(true); // Enable checkout
+      }
     } catch (error) {
-      setMessage("Error paying fines.");
+      handleMessage('Error paying fines.', 'red');
     } finally {
       setLoading(false);
     }
   };
 
   const handleCheckout = async () => {
-    if (!customerId || !itemIds) {
-      setMessage("Both Customer ID and Item IDs are required.");
-      return;
-    }
-
-    const itemIdArray = itemIds.split(',').map(id => id.trim()).filter(id => id);
     setLoading(true);
-    setMessage("");
+    handleMessage('', '');
     try {
       const response = await fetch(`${API_URL}/api/check_out/${customerId}/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ item_ids: itemIdArray })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ item_ids: itemIds.split(',').map((id) => id.trim()) }),
       });
       const data = await response.json();
-      if (data.status === 'success') {
-        const checkedOutItems = data.checked_out_items
-          .map(item => `Item ID: ${item.item_id}, Due Date: ${item.due_date}`)
-          .join('\n');
-        setMessage(`Checkout successful!\n${checkedOutItems}`);
-        setCustomerId("");
-        setItemIds("");
+  
+      if (response.ok) {
+        const successfulCheckouts = data.successful_checkouts.map(
+          (item) =>
+            `Item ID: ${item.item_id}, Due Date: ${item.due_date}, Message: ${item.message}`
+        ).join('\n');
+        const failureMessages = data.failed_checkouts
+          ? data.failed_checkouts.map((item) => `Item ID: ${item.item_id}, Message: ${item.message}`).join('\n')
+          : '';
+  
+        let message = `${successfulCheckouts}`;
+        if (failureMessages) {
+          message += `\n\nFailed to Checkout:\n${failureMessages}`;
+        }
+  
+        handleMessage(message, 'green');
       } else {
-        setMessage(data.message || "Error checking out items.");
+        const failureMessages = data.failed_checkouts
+          ? data.failed_checkouts.map((item) => `Item ID: ${item.item_id}, Message: ${item.message}`).join('\n')
+          : 'Checkout failed due to an unknown error.';
+        handleMessage(failureMessages, 'red');
       }
     } catch (error) {
-      setMessage("Error checking out items.");
+      handleMessage('Error during checkout.', 'red');
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="checkout-container">
-      <h2 style={{ textAlign: "center", color: "#333" }}>Book Checkout</h2>
+      <h1>Library Checkout</h1>
       <div className="instructions">
-        <h3>Instructions for Testing the Checkout Feature:</h3>
-        <ul style={{ listStyleType: "decimal", paddingLeft: "20px" }}>
-          {instructions.map((instruction, index) => (
-            <li key={index} style={{ marginBottom: "10px" }}>{instruction}</li>
+        <h3>Instructions:</h3>
+        <ol>
+          {instructions.map((step, index) => (
+            <li key={index}>{step}</li>
           ))}
-        </ul>
+        </ol>
       </div>
-      <div className="input-group">
-        <label htmlFor="customerId">Customer ID:</label>
+
+      <div className="form-group">
+        <label>Customer ID:</label>
         <input
-          id="customerId"
           type="text"
           value={customerId}
           onChange={(e) => setCustomerId(e.target.value)}
-          disabled={loading}
-          style={{ padding: "8px", width: "100%", marginBottom: "10px" }}
         />
-      </div>
-      <div className="input-group">
-        <label htmlFor="itemIds">Item IDs (comma-separated):</label>
-        <input
-          id="itemIds"
-          type="text"
-          value={itemIds}
-          onChange={(e) => setItemIds(e.target.value)}
-          disabled={loading || !validCard}
-          style={{ padding: "8px", width: "100%", marginBottom: "10px" }}
-        />
-      </div>
-      <div className="button-group">
-        <button onClick={checkLibraryCard} disabled={loading || !customerId} style={{ padding: "10px 20px", marginRight: "10px", backgroundColor: "#3f51b5", color: "white", border: "none", borderRadius: "5px" }}>
+        <button onClick={handleCheckLibraryCard} disabled={loading}>
           Check Library Card
         </button>
-        {renewCard && (
-          <button onClick={handleCardRenew} disabled={loading} style={{ padding: "10px 20px", marginRight: "10px", backgroundColor: "#ff9800", color: "white", border: "none", borderRadius: "5px" }}>
+      </div>
+
+      {renewCard && (
+        <div>
+          <button onClick={handleRenewLibraryCard} disabled={loading}>
             Renew Library Card
           </button>
-        )}
-        {validCard && !hasFines && !checkoutEnabled && (
-          <button onClick={checkFinesBeforeCheckout} disabled={loading || !itemIds} style={{ padding: "10px 20px", marginRight: "10px", backgroundColor: "#4caf50", color: "white", border: "none", borderRadius: "5px" }}>
-            Checkout
-          </button>
-        )}
-        {hasFines && (
-          <button onClick={handlePayFine} disabled={loading} style={{ padding: "10px 20px", backgroundColor: "#f44336", color: "white", border: "none", borderRadius: "5px" }}>
-            Pay Fine (${totalFines})
-          </button>
-        )}
-        {checkoutEnabled && (
-          <button onClick={handleCheckout} disabled={loading} style={{ padding: "10px 20px", backgroundColor: "#4caf50", color: "white", border: "none", borderRadius: "5px" }}>
-            Checkout
-          </button>
-        )}
-      </div>
-      {message && (
-        <div style={{ marginTop: "20px", whiteSpace: "pre-line", color: message.includes("Error") ? "red" : "green" }}>
-          {message}
         </div>
       )}
+
+      {validCard && (
+        <div>
+          <button style={{marginTop: '5px'}} onClick={handleCheckFines} disabled={loading}>
+            Check Fines
+          </button>
+        </div>
+      )}
+
+      {hasFines && (
+        <div>
+          <p tyle={{marginTop: '5px'}} >Total fines: ${totalFines}</p>
+          <button  tyle={{marginTop: '5px'}} onClick={handlePayFines} disabled={loading}>
+            Pay Fines
+          </button>
+        </div>
+      )}
+
+      {checkoutEnabled && (
+        <div>
+          <label>Item IDs (comma-separated):</label>
+          <input
+            type="text"
+            value={itemIds}
+            onChange={(e) => setItemIds(e.target.value)}
+          />
+          <button onClick={handleCheckout} disabled={loading}>
+            Checkout
+          </button>
+        </div>
+      )}
+
+      {message && (
+        <p className="message" style={{ color: messageColor }}>
+          {message}
+        </p>
+      )}
+      {loading && <p className="loading">Processing...</p>}
     </div>
   );
 };

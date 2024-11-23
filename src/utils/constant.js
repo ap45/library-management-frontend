@@ -4,15 +4,12 @@ export const menuItems = [
         path: "/dashboard"
     },
 
-    {
-        title: "Add Item",
-        path: "/add-item"
-    },
+    // {
+    //     title: "Add Item",
+    //     path: "/add-item"
+    // },
 
-    {
-        title: "Add Patron",
-        path: "/add-patron"
-    },
+
 
     {
         title: "Checkout",
@@ -32,5 +29,10 @@ export const menuItems = [
     {
         title: "Renewal",
         path: "/renewal"
+    },
+
+    {
+        title: "Item-List",
+        path: "/item-list"
     }
 ];
