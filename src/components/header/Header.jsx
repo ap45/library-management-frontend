@@ -1,20 +1,11 @@
-const Header = () => {
-    const headerStyle = {
-        color: "white",
-        fontSize: "24px",
-        textAlign: "center",
-        textTransform: "uppercase",
-        letterSpacing: "0.1em",
-        backgroundColor: "#3f51b5",
-        padding: "15px 0",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-        width: "100%",
-       // position: "fixed",
-        top: 0,
-        zIndex: 1000
-    };
+import "./Header.css";
 
-    return <h1 style={headerStyle}>Wayback Public Library</h1>;
+const Header = () => {
+    return (
+        <header className="header">
+            Wayback Public Library
+        </header>
+    );
 };
 
 export default Header;

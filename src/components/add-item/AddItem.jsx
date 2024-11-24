@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import "./Additem.css";
 
 const AddItem = () => {
   const [title, setTitle] = useState('');
@@ -14,7 +15,6 @@ const AddItem = () => {
 
   // Placeholder function for adding a book (to be connected with backend API)
   const handleAddItem = async () => {
-    // Validation check
     if (!title || !author || !isbn || !genre || !year) {
       setMessage("Please fill out all fields.");
       return;
@@ -23,9 +23,8 @@ const AddItem = () => {
     setLoading(true);
 
     try {
-      // API URL setup: replace 'VITE_BACKEND_URL' with actual environment variable in backend configuration
-      const API_URL = import.meta.env.VITE_BACKEND_URL; 
-      const response = await fetch(`${API_URL}/api/add_item`, { // Replace `/api/add_item` with actual endpoint
+      const API_URL = import.meta.env.VITE_BACKEND_URL;
+      const response = await fetch(`${API_URL}/api/add_item`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -37,7 +36,6 @@ const AddItem = () => {
 
       if (response.ok) {
         setMessage(`Book added successfully: ${data.message}`);
-        // Optionally reset form fields after successful submission
         setTitle('');
         setAuthor('');
         setIsbn('');
@@ -54,7 +52,7 @@ const AddItem = () => {
   };
 
   return (
-    <div className="add-item-container" style={{position: "fixed"}}>
+    <div className="add-item-container">
       <h2>Add New Book</h2>
       <div className="input-group">
         <label htmlFor="title">Title:</label>
@@ -107,13 +105,22 @@ const AddItem = () => {
         />
       </div>
       <div className="button-group">
-        <button onClick={handleAddItem} disabled={loading}>
+        <button
+          onClick={handleAddItem}
+          disabled={loading}
+          className="blue-button"
+        >
           {loading ? "Adding..." : "Add Book"}
         </button>
       </div>
-
       {message && (
-        <div className={`message ${message.includes("Error") || message.includes("Failed") ? "error" : "success"}`}>
+        <div
+          className={`message ${
+            message.includes("Error") || message.includes("Failed")
+              ? "error"
+              : "success"
+          }`}
+        >
           {message}
         </div>
       )}
