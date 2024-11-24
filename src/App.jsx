@@ -7,7 +7,7 @@ import Checkout from "./components/checkout/Checkout";
 import Checkin from "./components/checkin/Checkin";
 import Reservation from "./components/reservation/Reservation";
 import Renewal from "./components/renewal/Renewal";
-
+import ItemList from "./components/item-list/ItemList";
 import Header from "./components/header/Header";
 import Layout from "./components/layout/Layout";
 
@@ -29,6 +29,7 @@ function App() {
             <Route path="checkin" element={<Checkin />} />
             <Route path="reservation" element={<Reservation />} />
             <Route path="renewal" element={<Renewal />} />
+            <Route path="item-list" element={<ItemList />} /> 
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
