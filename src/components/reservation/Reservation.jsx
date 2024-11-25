@@ -13,17 +13,24 @@ const Reservation = () => {
   const checkLibraryCard = async () => {
     setLoading(true);
     setMessage("");
+    setValidCard(false);
+    setRenewCard(false);
     try {
       const response = await fetch(`${API_URL}/api/check_library_card/${customerId}/`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
       const data = await response.json();
-      if (data.status === "success" && data.valid_card) {
-        setValidCard(true);
-        setMessage("Libary Card is valid you may proceed with Reservation");
+      if (data.status === "success") {
+        if (data.valid_card) {
+          setValidCard(true);
+          setMessage("Library card is valid. You may proceed with reservation.");
+        } else if (data.card_expired) {
+          debugger;
+          setRenewCard(true);
+          setMessage(data.message);
+        }
       } else {
-        setRenewCard(true);
         setMessage(data.message);
       }
     } catch (error) {
@@ -42,11 +49,15 @@ const Reservation = () => {
         headers: { "Content-Type": "application/json" },
       });
       const data = await response.json();
-      setRenewCard(false);
-      setValidCard(true);
-      setMessage(data.message || "Library card renewed. Please recheck card status.");
+      if (data.status === "success") {
+        setRenewCard(false);
+        setValidCard(true);
+        setMessage(data.message || "Library card renewed. Please recheck card status.");
+      } else {
+        setMessage(data.message || "Error renewing card.");
+      }
     } catch (error) {
-      setMessage("Error renewing card.");
+      setMessage("Error connecting to server.");
     } finally {
       setLoading(false);
     }
@@ -101,9 +112,9 @@ const Reservation = () => {
         Check Library Card
       </button>
       {renewCard && (
-          <button onClick={handleCardRenew} disabled={loading} style={{ padding: "10px 20px", marginRight: "10px", backgroundColor: "#ff9800", color: "white", border: "none", borderRadius: "5px" }}>
+        <button onClick={handleCardRenew} disabled={loading} style={{ padding: "10px 20px", marginRight: "10px", backgroundColor: "#ff9800", color: "white", border: "none", borderRadius: "5px" }}>
           Renew Library Card
-          </button>
+        </button>
       )}
       <div className="input-group">
         <label htmlFor="itemId">Item ID:</label>
@@ -127,9 +138,9 @@ const Reservation = () => {
           borderRadius: "5px",
           cursor: loading || !customerId || !itemId ? "not-allowed" : "pointer",
         }}
-        >
-          Reserve
-        </button>
+      >
+        Reserve
+      </button>
 
       {message && (
         <div style={{ marginTop: "20px", color: message.includes("Error") ? "red" : "green" }}>

@@ -54,7 +54,7 @@ const Checkout = () => {
     setLoading(true);
     handleMessage('', '');
     try {
-      const response = await fetch(`${API_URL}/api/renew_library_card/${customerId}`, {
+      const response = await fetch(`${API_URL}/api/renew_library_card/${customerId}/`, {
         method: 'POST',
       });
       const data = await response.json();
@@ -179,15 +179,15 @@ const Checkout = () => {
       </div>
 
       {renewCard && (
-        <div>
-          <button onClick={handleRenewLibraryCard} disabled={loading}>
+        <div style={{'padding-top':'15px'}}>
+          <button  onClick={handleRenewLibraryCard} disabled={loading}>
             Renew Library Card
           </button>
         </div>
       )}
 
       {validCard && (
-        <div>
+        <div style={{'padding-top':'15px'}}>
           <button style={{marginTop: '5px'}} onClick={handleCheckFines} disabled={loading}>
             Check Fines
           </button>
@@ -195,7 +195,7 @@ const Checkout = () => {
       )}
 
       {hasFines && (
-        <div>
+        <div style={{'padding-top':'15px'}}>
           <p tyle={{marginTop: '5px'}} >Total fines: ${totalFines}</p>
           <button  tyle={{marginTop: '5px'}} onClick={handlePayFines} disabled={loading}>
             Pay Fines

@@ -15,9 +15,9 @@ const Checkin = () => {
     }
 
     const itemIdArray = itemIds
-      .split(",") // Split the string by commas
-      .map((id) => id.trim()) // Remove extra spaces
-      .filter((id) => id); // Remove empty values
+      .split(",")
+      .map((id) => id.trim())
+      .filter((id) => id);
 
     if (itemIdArray.length === 0) {
       setMessage("Invalid Item IDs.");
@@ -31,11 +31,12 @@ const Checkin = () => {
       const response = await fetch(`${API_URL}/api/check_in/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ item_ids: itemIdArray }), // Ensure it's a valid array
+        body: JSON.stringify({ item_ids: itemIdArray }),
       });
 
       const data = await response.json();
-      if (data.status === "success") {
+
+      if (response.ok) {
         const checkedInMessages = data.checked_in_items.map((item) => {
           const lateFeeMessage = item.late_fees
             ? `Late fees of $${item.late_fees.toFixed(2)} applied.`
@@ -43,18 +44,28 @@ const Checkin = () => {
           return `Item ID ${item.item_id}: ${lateFeeMessage}`;
         });
 
-        setMessage(
-          `Check-in successful!\n\n${checkedInMessages.join("\n")}`
-        );
-
-        // Process reservation if items are checked in successfully
-        await processReservationOnCheckIn(itemIdArray[0]); // Process reservation for the first item
-
-        // Get the reservation queue after check-in
-        await getReservationQueue(itemIdArray[0]);
-      } else {
+        const notCheckedOutItems = data.not_checked_out_items.join(", ");
         const notFoundItems = data.not_found_items.join(", ");
-        setMessage(`Error: Items not found: ${notFoundItems}`);
+
+        let finalMessage = `Check-in summary:\n\n${checkedInMessages.join("\n")}`;
+
+        if (notCheckedOutItems) {
+          finalMessage += `\n\nThe Following Item is not by checked out by anyone: ${notCheckedOutItems}`;
+        }
+
+        if (notFoundItems) {
+          finalMessage += `\n\nItems not found: ${notFoundItems}`;
+        }
+
+        setMessage(finalMessage);
+
+        // Process reservation for the first successfully checked-in item
+        if (data.checked_in_items.length > 0) {
+          await processReservationOnCheckIn(data.checked_in_items[0].item_id);
+          await getReservationQueue(data.checked_in_items[0].item_id);
+        }
+      } else {
+        setMessage(`Error: ${data.message}`);
       }
     } catch (error) {
       setMessage("Error connecting to server.");
@@ -70,7 +81,7 @@ const Checkin = () => {
         headers: { "Content-Type": "application/json" },
       });
       const data = await response.json();
-      if (data.status === "success") {
+      if (response.ok) {
         setMessage((prev) => `${prev}\n${data.message}`);
       } else {
         setMessage((prev) => `${prev}\n${data.message}`);
@@ -86,14 +97,14 @@ const Checkin = () => {
         method: "GET",
       });
       const data = await response.json();
-      if (data.status === "success") {
+      if (response.ok) {
         setQueue(data.queue);
       } else {
         setQueue([]);
-        setMessage("No active reservations.");
+        setMessage((prev) => `${prev}\nNo active reservations.`);
       }
     } catch (error) {
-      setMessage("Error retrieving reservation queue.");
+      setMessage((prev) => `${prev}\nError retrieving reservation queue.`);
     }
   };
 
@@ -124,7 +135,6 @@ const Checkin = () => {
           {message}
         </div>
       )}
-
     </div>
   );
 };
